@@ -779,9 +779,22 @@ fetch('./data.csv?v=' + Date.now())
   .then(buf => {
     let txt = new TextDecoder('utf-8').decode(buf);
     if (txt.includes('')) txt = new TextDecoder('windows-1251').decode(buf);
-    const parsed = parseRawText(txt);
-    if (parsed && parsed.length) {
-      logs = parsed;
+    const lines = txt.replace(/^\uFEFF/, '').split(/\r?\n/);
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+      const sep = lines[i].indexOf(';') !== -1 ? ';' : ',';
+      const c = lines[i].split(sep).map(x => x.trim().replace(/^"|"$/g, ''));
+      const t = c.at(0) || '', b = c.at(1) || '', ch = c.at(2) || '', u = c.at(3) || '';
+      if ((t === 'Утро' || t === 'День' || t === 'Вечер' || t === 'Ночь') && b && u) {
+        out.push({
+          t: t, b: b, c: ch || 'Без', u: u,
+          ch: (c.at(4) || '').toUpperCase() === 'TRUE',
+          sh: (c.at(6) || '').toUpperCase() === 'TRUE'
+        });
+      }
+    }
+    if (out.length) {
+      logs = out;
       const st = document.getElementById('statusText');
       if (st) st.innerText = 'Загружено из базы: ' + logs.length + ' забросов';
       renderCalc();
