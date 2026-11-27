@@ -774,32 +774,16 @@ try {
 renderCalc();
 renderRev();
 renderDex();
-fetch('./data.csv?v=' + Date.now())
+fetch('data.csv?v=' + Date.now())
   .then(r => r.arrayBuffer())
   .then(buf => {
     let txt = new TextDecoder('utf-8').decode(buf);
-    if (txt.includes('')) txt = new TextDecoder('windows-1251').decode(buf);
-    const lines = txt.replace(/^\uFEFF/, '').split(/\r?\n/);
-    const out = [];
-    for (let i = 0; i < lines.length; i++) {
-      const sep = lines[i].indexOf(';') !== -1 ? ';' : ',';
-      const c = lines[i].split(sep).map(x => x.trim().replace(/^"|"$/g, ''));
-      const t = c.at(0) || '', b = c.at(1) || '', ch = c.at(2) || '', u = c.at(3) || '';
-      if ((t === 'Утро' || t === 'День' || t === 'Вечер' || t === 'Ночь') && b && u) {
-        out.push({
-          t: t, b: b, c: ch || 'Без', u: u,
-          ch: (c.at(4) || '').toUpperCase() === 'TRUE',
-          sh: (c.at(6) || '').toUpperCase() === 'TRUE'
-        });
-      }
-    }
-    if (out.length) {
-      logs = out;
-      const st = document.getElementById('statusText');
-      if (st) st.innerText = 'Загружено из базы: ' + logs.length + ' забросов';
-      renderCalc();
-      renderRev();
-      renderDex();
+    let parsed = parseRawText(txt);
+    if (!parsed.length) parsed = parseRawText(new TextDecoder('windows-1251').decode(buf));
+    if (parsed.length) {
+      logs = parsed;
+      document.getElementById('statusText').innerText = 'Загружено из базы: ' + logs.length + ' забросов';
+      renderCalc(); renderRev(); renderDex();
     }
   });
 </script>
