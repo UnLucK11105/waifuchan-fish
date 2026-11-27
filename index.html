@@ -775,31 +775,10 @@ renderCalc();
 renderRev();
 renderDex();
 fetch('data.csv')
-  .then(function(r) { return r.ok ? r.text() : ''; })
-  .then(function(txt) {
-    if (!txt) return;
-    const lines = txt.replace(/^\uFEFF/, '').split(/\r?\n/);
-    const out = [];
-    for (let i = 0; i < lines.length; i++) {
-      const sep = lines[i].indexOf(';') !== -1 ? ';' : ',';
-      const c = lines[i].split(sep).map(function(x) { return x.trim().replace(/^"|"$/g, ''); });
-      const t = c.at(0) || '', b = c.at(1) || '', ch = c.at(2) || '', u = c.at(3) || '';
-      if ((t === 'Утро' || t === 'День' || t === 'Вечер' || t === 'Ночь') && b && u) {
-        out.push({
-          t: t, b: b, c: ch || 'Без', u: u,
-          ch: (c.at(4) || '').toUpperCase() === 'TRUE',
-          sh: (c.at(6) || '').toUpperCase() === 'TRUE'
-        });
-      }
-    }
-    if (out.length > 0) {
-      logs = out;
-      const st = document.getElementById('statusText');
-      if (st) st.innerText = 'База загружена: ' + logs.length + ' записей';
-      renderCalc();
-      renderRev();
-      renderDex();
-    }
+  .then(r => r.ok ? r.text() : '')
+  .then(txt => {
+    const parsed = parseRawText(txt);
+    if (parsed.length) applyData(parsed, 'из базы сайта');
   });
 </script>
 </body>
