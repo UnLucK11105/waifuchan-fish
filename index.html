@@ -774,13 +774,20 @@ try {
 renderCalc();
 renderRev();
 renderDex();
-fetch('./data.csv')
+fetch('./data.csv?v=' + Date.now())
   .then(r => r.arrayBuffer())
   .then(buf => {
     let txt = new TextDecoder('utf-8').decode(buf);
     if (txt.includes('')) txt = new TextDecoder('windows-1251').decode(buf);
     const parsed = parseRawText(txt);
-    if (parsed.length) applyData(parsed, 'из базы сайта');
+    if (parsed && parsed.length) {
+      logs = parsed;
+      const st = document.getElementById('statusText');
+      if (st) st.innerText = 'Загружено из базы: ' + logs.length + ' забросов';
+      renderCalc();
+      renderRev();
+      renderDex();
+    }
   });
 </script>
 </body>
