@@ -774,9 +774,11 @@ try {
 renderCalc();
 renderRev();
 renderDex();
-fetch('data.csv')
-  .then(r => r.ok ? r.text() : '')
-  .then(txt => {
+fetch('./data.csv')
+  .then(r => r.arrayBuffer())
+  .then(buf => {
+    let txt = new TextDecoder('utf-8').decode(buf);
+    if (txt.includes('')) txt = new TextDecoder('windows-1251').decode(buf);
     const parsed = parseRawText(txt);
     if (parsed.length) applyData(parsed, 'из базы сайта');
   });
