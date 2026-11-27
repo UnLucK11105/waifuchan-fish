@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ru">
+<style>
+  #status, #dbStatus, .upload-btn, label[for="csvFile"], label.btn, #pasteModal, #pasteBox, button[onclick*="paste"], button[onclick*="Paste"] {
+    display: none !important;
+  }
+</style>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рыбалка Вайфучан — Калькулятор и Справочник</title>
+ <style>
+  img { width: 84px !important; height: 84px !important; object-fit: contain !important; display: block !important; margin: 0 auto 14px !important; background: rgba(255, 255, 255, 0.04) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 18px !important; padding: 8px !important; }
+  .card-header { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+</style>
+
+<style>
+ img { width: 84px !important; height: 84px !important; object-fit: contain !important; display: block !important; margin: 0 auto 14px !important; background: rgba(255, 255, 255, 0.04) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 18px !important; padding: 8px !important; }
+  .card-header { flex-direction: column !important; align-items: center !important; text-align: center !important; }
+  :root {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-elevated: #2c2c2e;
+    --border: rgba(255, 255, 255, 0.1);
+    --text: #f5f5f7;
+    --text-secondary: #86868b;
+    --accent: #0a84ff;
+    --accent-hover: #0071e3;
+    --common: #8e8e93;
+    --uncommon: #30d158;
+    --rare: #0a84ff;
+    --epic: #bf5af2;
+    --legendary: #ffd60a;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.47;
+    padding: 0 20px 60px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .container {
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+    margin: 0 -20px 32px;
+    padding: 18px 20px;
+  }
+
+  .header-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    background: none;
+    -webkit-text-fill-color: initial;
+  }
+
+  .subtitle, .sub {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    letter-spacing: -0.01em;
+  }
+
+  .btn, .btn-primary, .upload-btn {
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 980px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn:hover, .btn-primary:hover, .upload-btn:hover {
+    background: var(--accent-hover);
+  }
+
+  .btn:active, .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .tabs {
+    display: inline-flex;
+    background: var(--surface);
+    padding: 3px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 28px;
+    gap: 2px;
+  }
+
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 7px 18px;
+    border-radius: 7px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tab:hover {
+    color: var(--text);
+  }
+
+  .tab.active {
+    background: var(--surface-elevated);
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .controls, .box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    background: var(--surface);
+    padding: 22px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    align-items: end;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  select:focus, input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .alert-box, .hint {
+    background: rgba(255, 214, 10, 0.08);
+    border: 1px solid rgba(255, 214, 10, 0.25);
+    border-left: 3px solid var(--legendary);
+    padding: 14px 18px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    font-size: 0.88rem;
+    color: #ffe57f;
+  }
+
+  .stats-bar, .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .stat-pill, .pill {
+    background: var(--surface);
+    padding: 12px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+
+  .stat-pill b, .pill b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .drop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .drop-row, .row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: background 0.15s ease;
+  }
+
+  .drop-row:hover, .row:hover {
+    background: var(--surface-elevated);
+  }
+
+  .bar-wrap, .bar-bg {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    height: 6px;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .bar-fill, .bar {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    transition: transform 0.2s ease, background 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card:hover {
+    background: var(--surface-elevated);
+    transform: translateY(-2px);
+  }
+
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .badge {
+    font-size: 0.72rem;
+    padding: 3px 9px;
+    border-radius: 980px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .best-combo {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+  }
+
+  .best-combo b { color: var(--text); }
+
+  .r-Обычная { color: var(--common); }
+  .bg-Обычная { background: rgba(142, 142, 147, 0.18); color: var(--common); }
+  .fill-Обычная { background: var(--common); }
+
+  .r-Необычная { color: var(--uncommon); }
+  .bg-Необычная { background: rgba(48, 209, 88, 0.16); color: var(--uncommon); }
+  .fill-Необычная { background: var(--uncommon); }
+
+  .r-Редкая { color: var(--rare); }
+  .bg-Редкая { background: rgba(10, 132, 255, 0.16); color: var(--rare); }
+  .fill-Редкая { background: var(--rare); }
+
+  .r-Эпическая { color: var(--epic); }
+  .bg-Эпическая { background: rgba(191, 90, 242, 0.16); color: var(--epic); }
+  .fill-Эпическая { background: var(--epic); }
+
+  .r-Легендарная { color: var(--legendary); }
+  .bg-Легендарная { background: rgba(255, 214, 10, 0.16); color: var(--legendary); }
+  .fill-Легендарная { background: var(--legendary); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>Рыбалка Вайфучан — Гайд & Калькулятор</h1>
+      <div class="subtitle" id="statusText">База уловов загружена</div>
+    </div>
+  </header>
+  <div class="tabs">
+    <button type="button" class="tab active" id="tCalc" onclick="setTab('calc')">🧮 По наживке</button>
+    <button type="button" class="tab" id="tRev" onclick="setTab('rev')">🎯 Где ловить рыбу</button>
+    <button type="button" class="tab" id="tDex" onclick="setTab('dex')">📖 Справочник (64)</button>
+  </div>
+
+  <!-- ВКЛАДКА 1: ПО НАЖИВКЕ -->
+  <div id="pCalc" class="panel active">
+    <div class="controls">
+      <div class="control-group">
+        <label>Время суток</label>
+        <select id="selTime" onchange="renderCalc()">
+          <option value="Утро">🌅 Утро</option>
+          <option value="День">☀️ День</option>
+          <option value="Вечер">🌇 Вечер</option>
+          <option value="Ночь" selected>🌙 Ночь</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Наживка</label>
+        <select id="selBait" onchange="renderCalc()">
+          <option value="Магнит" selected>🧲 Магнит</option>
+          <option value="Лунная приманка">🌙 Лунная приманка</option>
+          <option value="Криль">🦐 Криль</option>
+          <option value="Блесна">🪝 Блесна</option>
+          <option value="Креветка">🍤 Креветка</option>
+          <option value="Червь">🪱 Червь</option>
+          <option value="Мотыль">🦟 Мотыль</option>
+          <option value="Хлеб">🍞 Хлеб</option>
+          <option value="Корм для рыбок">🥫 Корм для рыбок</option>
+          <option value="Перламутровая">✨ Перламутровая</option>
+          <option value="Светлячок">💡 Светлячок</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Прикормка</label>
+        <select id="selChum" onchange="renderCalc()">
+          <option value="Любая" selected>📊 Все прикормки</option>
+          <option value="Крупная">🥩 Крупная</option>
+          <option value="Пахучая">🧪 Пахучая</option>
+          <option value="Хлебная">🌾 Хлебная</option>
+          <option value="Без">🚫 Без прикормки</option>
+        </select>
+      </div>
+    </div>
+    <div id="hintBox" class="alert-box" style="display:none"></div>
+    <div id="calcPills" class="stats-bar"></div>
+    <div id="calcRows" class="drop-list"></div>
+  </div>
+
+  <!-- ВКЛАДКА 2: ОБРАТНЫЙ КАЛЬКУЛЯТОР -->
+  <div id="pRev" class="panel">
+    <div class="controls">
+      <div class="control-group">
+        <label>Выбери нужную рыбу или сокровище (64 вида)</label>
+        <select id="selFish" onchange="renderRev()"></select>
+      </div>
+    </div>
+    <div id="revCard"></div>
+    <div id="revRows" class="drop-list" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ВКЛАДКА 3: СПРАВОЧНИК -->
+  <div id="pDex" class="panel">
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <input type="text" id="qSearch" placeholder="Поиск по названию..." oninput="renderDex()" style="flex:1; min-width:200px;">
+      <select id="qRar" onchange="renderDex()" style="width:180px;">
+        <option value="Все">Все редкости</option>
+        <option value="Легендарная">🟡 Легендарная</option>
+        <option value="Эпическая">🟣 Эпическая</option>
+        <option value="Редкая">🔵 Редкая</option>
+        <option value="Необычная">🟢 Необычная</option>
+        <option value="Обычная">⚪ Обычная</option>
+      </select>
+    </div>
+    <div id="dexGrid" class="grid"></div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ВСТАВКИ ТЕКСТОМ -->
+<div id="pasteModal" class="modal">
+  <div class="modal-box">
+    <h3 style="margin-bottom:8px;">📋 Вставить строки из Google Таблиц</h3>
+    <p style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Открой вторую вкладку таблицы (с уловом), нажми <b>Ctrl+A</b>, затем <b>Ctrl+C</b> и вставь ниже (<b>Ctrl+V</b>):</p>
+    <textarea id="pasteArea" rows="8" placeholder="Ночь,Креветка,Крупная,Карась..."></textarea>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:12px;">
+      <button type="button" class="btn btn-sec" onclick="closePaste()">Отмена</button>
+      <button type="button" class="btn" onclick="applyPaste()">✅ Загрузить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RAW = [
+  "Плотва|Обычная|Утро/день/вечер|Любая",
+  "Карась|Обычная|Любое|Любая",
+  "Уклейка|Обычная|Утро/день|Любая",
+  "Ёрш|Обычная|Любое|Любая",
+  "Густера|Обычная|Вечер/ночь|Любая",
+  "Елец|Обычная|Утро/вечер|Любая",
+  "Пескарь|Обычная|Утро/день|Любая",
+  "Ротан|Обычная|День/вечер|Любая",
+  "Краснопёрка|Обычная|День/вечер|Любая",
+  "Лягушка|Обычная|Утро/вечер|Любая",
+  "Щука|Необычная|Утро/вечер|Любая",
+  "Синец|Необычная|Утро/вечер|Любая",
+  "Язь|Необычная|Утро/вечер|Любая",
+  "Налим|Необычная|Ночь|Любая",
+  "Хариус|Необычная|Утро/вечер|Любая",
+  "Креветка|Необычная|Любое|Любая",
+  "Черепаха|Необычная|День/вечер|Любая",
+  "Краб|Необычная|Утро/вечер/Ночь|Любая",
+  "Ракушка|Необычная|Любое|Любая",
+  "Тропик|Необычная|Утро/день|Любая",
+  "Иглобрюх|Необычная|Любое|Любая",
+  "Шестиполосый Дистиход|Необычная|День|Любая",
+  "Нильский слоник|Необычная|Вечер/ночь|Любая",
+  "Карп|Редкая|Утро/вечер/Ночь|Любая",
+  "Микижа|Редкая|Утро/вечер|Любая",
+  "Жерех|Редкая|Утро/день|Любая",
+  "Карп кои|Редкая|Утро/день|Любая",
+  "Выдра|Редкая|Утро/день|Любая",
+  "Устрица|Редкая|Любое|Любая",
+  "Пиранья|Редкая|День|Любая",
+  "Осьминог|Редкая|Вечер/ночь|Любая",
+  "Лобстер|Редкая|Вечер/ночь|Любая",
+  "Павлинний басс|Редкая|День|Любая",
+  "Тетрадон мбу|Редкая|День/вечер|Любая",
+  "Кальмар|Редкая|Ночь|Любая",
+  "Медуза|Редкая|Вечер/ночь|Любая",
+  "Осётр|Эпическая|Утро/Ночь|Любая",
+  "Толстолобик|Эпическая|День|Любая",
+  "Нерка|Эпическая|Утро/вечер|Любая",
+  "Удильщик|Эпическая|Ночь|Любая",
+  "Акула|Эпическая|День/вечер|Любая",
+  "Тюлень|Эпическая|Утро/день|Любая",
+  "Кит|Эпическая|Утро/вечер/Ночь|Любая",
+  "Рыба-капля|Эпическая|Ночь|Любая",
+  "Крокодил|Эпическая|Вечер/ночь|Любая",
+  "Дельфин|Эпическая|Утро/день|Любая",
+  "Золотая рыбка|Эпическая|Утро/вечер|Любая",
+  "Мегалодон|Легендарная|День/вечер|Блесна",
+  "Речной дракон|Легендарная|Ночь|Лунная приманка",
+  "Голубой кит|Легендарная|Утро|Криль",
+  "Рыба-ктулху|Легендарная|Ночь|Лунная приманка",
+  "Консервная банка|Обычная|Любое|Любая",
+  "Носок|Обычная|Любое|Любая",
+  "Зонтик|Необычная|Любое|Любая",
+  "Ботинок|Необычная|Любое|Любая",
+  "Чей-то телефон|Редкая|Любое|Любая",
+  "Бутылка с запиской|Необычная|Любое|Любая",
+  "Серебряная монета|Редкая|Любое|Любая",
+  "Амфора|Редкая|День|Любая",
+  "Старый ключ|Редкая|Ночь|Любая",
+  "Якорь|Эпическая|Любое|Любая",
+  "Кольцо|Эпическая|Вечер|Любая",
+  "Корона|Легендарная|Любое|Магнит",
+  "Трезубец|Легендарная|Ночь|Магнит/Лунная приманка"
+];
+
+const DB = RAW.map(s => {
+  const [name, rar, time, bait] = s.split('|');
+  return { name, rar, time, bait };
+});
+const RMAP = {};
+DB.forEach(x => RMAP[x.name.toLowerCase()] = x.rar);
+
+let logs = [];
+
+function thumbHtml(name) {
+  return `<div class="fish-thumb">🐟<img src="img/${encodeURIComponent(name)}.webp" onload="this.parentNode.firstChild.nodeValue=''" onerror="this.remove()"></div>`;
+}
+
+function setTab(id) {
+  ['Calc','Rev','Dex'].forEach(k => {
+    document.getElementById('t' + k).classList.toggle('active', k.toLowerCase() === id);
+    document.getElementById('p' + k).classList.toggle('active', k.toLowerCase() === id);
+  });
+  if (id === 'rev') renderRev();
+  if (id === 'dex') renderDex();
+}
+
+function renderCalc() {
+  const t = document.getElementById('selTime').value;
+  const b = document.getElementById('selBait').value;
+  const c = document.getElementById('selChum').value;
+
+  const hb = document.getElementById('hintBox');
+  let h = "";
+  if (b === "Лунная приманка" && t !== "Ночь") h = "⚠️ <b>Лунная приманка</b> работает полноценно только <b>Ночью</b>.";
+  if (b === "Криль" && t !== "Утро") h = "⚠️ <b>Криль</b> предназначен для ловли <b>Утром</b> (Голубой кит, Тюлень).";
+  if (b === "Перламутровая" || b === "Светлячок") h = "💡 <b>Перламутровая</b> и <b>Светлячок</b> в текущей версии игры не дают бонуса (задуманы под Шайни).";
+  hb.style.display = h ? 'block' : 'none';
+  hb.innerHTML = h;
+
+  const pEl = document.getElementById('calcPills');
+  const rEl = document.getElementById('calcRows');
+
+  if (!logs.length) {
+    pEl.innerHTML = `<div class="stat-pill">⚠️ Нажми <b>📂 Выбрать CSV</b> или <b>📋 Вставить текстом</b> вверху справа</div>`;
+    rEl.innerHTML = "";
+    return;
+  }
+
+  const f = logs.filter(r => r.t.toLowerCase() === t.toLowerCase() && r.b.toLowerCase() === b.toLowerCase() && (c === "Любая" || r.c.toLowerCase() === c.toLowerCase()));
+  if (!f.length) {
+    pEl.innerHTML = `<div class="stat-pill">Замеров: <b>0</b> (попробуй выбрать «Все прикормки»)</div>`;
+    rEl.innerHTML = "";
+    return;
+  }
+
+  let ch = 0, sh = 0;
+  const cnt = {};
+  f.forEach(r => {
+    cnt[r.u] = (cnt[r.u] || 0) + 1;
+    if (r.ch) ch++;
+    if (r.sh) sh++;
+  });
+
+  pEl.innerHTML = `
+    <div class="stat-pill">Выборка: <b>${f.length} забросов</b></div>
+    <div class="stat-pill">📦 Сундук: <b>${(ch / f.length * 100).toFixed(1)}%</b> (${ch})</div>
+    <div class="stat-pill">✨ Шайни: <b>${(sh / f.length * 100).toFixed(1)}%</b> (${sh})</div>
+  `;
+
+  const srt = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
+  const mx = srt[0][1];
+
+  rEl.innerHTML = srt.map(([nm, n]) => {
+    const pct = (n / f.length * 100).toFixed(1);
+    const rar = RMAP[nm.toLowerCase()] || "Обычная";
+    const w = Math.round(n / mx * 100);
+    return `
+      <div class="drop-row">
+        <div class="drop-info"><span class="badge bg-${rar}">${rar}</span><b>${nm}</b></div>
+        <div class="bar-wrap"><div class="bar-fill fill-${rar}" style="width:${w}%"></div></div>
+        <div class="drop-pct r-${rar}">${pct}% (${n})</div>
+      </div>`;
+  }).join('');
+}
+
+function renderRev() {
+  const fishName = document.getElementById('selFish').value;
+  const item = DB.find(x => x.name === fishName) || DB[0];
+  const cardEl = document.getElementById('revCard');
+  const rowsEl = document.getElementById('revRows');
+
+  const totalCaught = logs.filter(r => r.u.toLowerCase() === item.name.toLowerCase()).length;
+
+  cardEl.innerHTML = `
+    <div class="card">
+      <div class="card-top" style="margin-bottom:0">
+        ${thumbHtml(item.name)}
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <b class="r-${item.rar}" style="font-size:1.1rem">${item.name}</b>
+            <span class="badge bg-${item.rar}">${item.rar}</span>
+          </div>
+          <div class="card-meta" style="margin-top:4px;">
+            <div>🕒 Время: <b>${item.time}</b> • 🪝 Наживка: <b>${item.bait}</b> • 📊 Поймано в логах: <b>${totalCaught} раз</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  if (!logs.length) {
+    rowsEl.innerHTML = `<div class="stat-pill">Загрузи CSV с логами, чтобы увидеть рейтинг комбинаций</div>`;
+    return;
+  }
+
+  const grp = {};
+  logs.forEach(r => {
+    const k = `${r.t} + ${r.b} (${r.c})`;
+    if (!grp[k]) grp[k] = { total: 0, hit: 0 };
+    grp[k].total++;
+    if (r.u.toLowerCase() === item.name.toLowerCase()) grp[k].hit++;
+  });
+
+  const ranked = Object.entries(grp)
+    .filter(([, v]) => v.hit > 0)
+    .map(([k, v]) => ({ k, hit: v.hit, total: v.total, rate: v.hit / v.total }))
+    .sort((a, b) => b.rate - a.rate || b.hit - a.hit);
+
+  if (!ranked.length) {
+    rowsEl.innerHTML = `<div class="stat-pill">В загруженных логах этот вид пока не попадался</div>`;
+    return;
+  }
+
+  const mx = ranked[0].rate;
+  rowsEl.innerHTML = ranked.map(x => `
+    <div class="drop-row">
+      <div class="drop-info"><b>${x.k}</b></div>
+      <div class="bar-wrap"><div class="bar-fill fill-${item.rar}" style="width:${Math.round(x.rate / mx * 100)}%"></div></div>
+      <div class="drop-pct r-${item.rar}">${(x.rate * 100).toFixed(1)}% (${x.hit}/${x.total})</div>
+    </div>
+  `).join('');
+}
+
+function renderDex() {
+  const q = document.getElementById('qSearch').value.toLowerCase().trim();
+  const rf = document.getElementById('qRar').value;
+
+  const tot = {}, grp = {};
+  logs.forEach(r => {
+    const u = r.u.toLowerCase();
+    tot[u] = (tot[u] || 0) + 1;
+    const k = `${r.t} + ${r.b} (${r.c})`;
+    if (!grp[k]) grp[k] = { total: 0, hits: {} };
+    grp[k].total++;
+    grp[k].hits[u] = (grp[k].hits[u] || 0) + 1;
+  });
+
+  document.getElementById('dexGrid').innerHTML = DB
+    .filter(i => i.name.toLowerCase().includes(q) && (rf === "Все" || i.rar === rf))
+    .map(i => {
+      const u = i.name.toLowerCase();
+      let bk = "Загрузи CSV", br = 0;
+      if (logs.length) {
+        bk = "Не поймано в логах";
+        for (const [k, v] of Object.entries(grp)) {
+          const hit = v.hits[u] || 0;
+          if (hit > 0 && (hit / v.total) > br) {
+            br = hit / v.total;
+            bk = `${k} — <b>${(br * 100).toFixed(1)}%</b> (${hit}/${v.total})`;
+          }
+        }
+      }
+      return `
+        <div class="card">
+          <div>
+            <div class="card-top">
+              ${thumbHtml(i.name)}
+              <div>
+                <div class="r-${i.rar}" style="font-weight:700">${i.name}</div>
+                <span class="badge bg-${i.rar}">${i.rar}</span>
+              </div>
+            </div>
+            <div class="card-meta">
+              <div>🕒 <b>Время:</b> ${i.time}</div>
+              <div>🪝 <b>Наживка:</b> ${i.bait}</div>
+              <div>📊 <b>Поймано:</b> ${tot[u] || 0} раз</div>
+            </div>
+          </div>
+          <div class="best-combo">🔥 <b>Топ:</b> ${bk}</div>
+        </div>`;
+    }).join('');
+}
+
+function parseRawText(raw) {
+  const clean = raw.replace(/^\uFEFF/, '');
+  const lines = clean.split(/\r?\n/);
+  const out = [];
+  const validTimes = new Set(["утро", "день", "вечер", "ночь"]);
+
+  for (let i = 0; i < lines.length; i++) {
+    const ln = lines[i].trim();
+    if (!ln) continue;
+    let sep = ',';
+    if (ln.includes('\t')) sep = '\t';
+    else if (ln.includes(';')) sep = ';';
+
+    const c = ln.split(sep).map(x => x.trim().replace(/^"|"$/g, ''));
+    const t = c[0] || "";
+    const b = c[1] || "";
+    const chm = c[2] || "Без";
+    const u = c[3] || "";
+    const chestRaw = (c[4] || "").toLowerCase();
+    const shinyRaw = (c[6] || "").toLowerCase();
+
+    if (validTimes.has(t.toLowerCase()) && b && u) {
+      out.push({
+        t: t[0].toUpperCase() + t.slice(1).toLowerCase(),
+        b: b,
+        c: chm || "Без",
+        u: u,
+        ch: chestRaw === "true" || chestRaw === "1" || chestRaw === "истина",
+        sh: shinyRaw === "true" || shinyRaw === "1" || shinyRaw === "истина"
+      });
+    }
+  }
+  return out;
+}
+
+function applyData(parsed, sourceLabel) {
+  if (!parsed.length) {
+    alert("Не найдено ни одной строки с уловом! Убедись, что выбрал лист, где столбцы идут в порядке: Время, Наживка, Прикормка, Улов.");
+    return;
+  }
+  logs = parsed;
+  try { localStorage.setItem('waifuchan_logs_v9', JSON.stringify(logs)); } catch (e) {}
+  document.getElementById('statusText').innerText = `✅ Загружено: ${logs.length} реальных забросов (${sourceLabel})`;
+  renderCalc();
+  renderRev();
+  renderDex();
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = function(ev) {
+    const buf = ev.target.result;
+    let txt = new TextDecoder('utf-8').decode(buf);
+    let parsed = parseRawText(txt);
+    if (!parsed.length) {
+      txt = new TextDecoder('windows-1251').decode(buf);
+      parsed = parseRawText(txt);
+    }
+    applyData(parsed, f.name);
+  };
+  rd.readAsArrayBuffer(f);
+  e.target.value = "";
+});
+
+function openPaste() { document.getElementById('pasteModal').classList.add('open'); }
+function closePaste() { document.getElementById('pasteModal').classList.remove('open'); }
+function applyPaste() {
+  const txt = document.getElementById('pasteArea').value;
+  const parsed = parseRawText(txt);
+  if (parsed.length) {
+    closePaste();
+    applyData(parsed, "из буфера обмена");
+  } else {
+    alert("Не удалось распознать строки. Скопируй таблицу со второй вкладки Google Sheets (Ctrl+A -> Ctrl+C).");
+  }
+}
+
+// Инициализация списка рыб и восстановление из памяти
+document.getElementById('selFish').innerHTML = DB.map(x => `<option value="${x.name}">${x.name} (${x.rar})</option>`).join('');
+try {
+  const saved = localStorage.getItem('waifuchan_logs_v9');
+  if (saved) {
+    logs = JSON.parse(saved);
+    document.getElementById('statusText').innerText = `✅ Восстановлено из памяти браузера: ${logs.length} забросов`;
+  }
+} catch (e) {}
+
+renderCalc();
+renderRev();
+renderDex();
+fetch('data.csv')
+  .then(function(r) { return r.ok ? r.text() : ''; })
+  .then(function(txt) {
+    if (!txt) return;
+    const lines = txt.replace(/^\uFEFF/, '').split(/\r?\n/);
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+      const sep = lines[i].indexOf(';') !== -1 ? ';' : ',';
+      const c = lines[i].split(sep).map(function(x) { return x.trim().replace(/^"|"$/g, ''); });
+      const t = c[0] || '', b = c[1] || '', ch = c[2] || '', u = c[3] || '';
+      if ((t === 'Утро' || t === 'День' || t === 'Вечер' || t === 'Ночь') && b && u) {
+        out.push({
+          t: t, b: b, c: ch || 'Без', u: u,
+          ch: (c[4] || '').toUpperCase() === 'TRUE',
+          sh: (c[6] || '').toUpperCase() === 'TRUE'
+        });
+      }
+    }
+    if (out.length > 0) {
+      logs = out;
+      const st = document.getElementById('status') || document.getElementById('dbStatus');
+      if (st) st.innerText = 'Загружено записей улова: ' + logs.length;
+      if (typeof calc === 'function') calc();
+      if (typeof dex === 'function') dex();
+      if (typeof revCalc === 'function') revCalc();
+    }
+  });
+
+</script>
+</body>
+</html>
