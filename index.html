@@ -729,8 +729,8 @@ function applyData(parsed, sourceLabel) {
   renderRev();
   renderDex();
 }
-
-document.getElementById('fileInput').addEventListener('change', function(e) {
+  if (document.getElementById('fileInput'))
+  document.getElementById('fileInput').addEventListener('change', function(e) {
   const f = e.target.files[0];
   if (!f) return;
   const rd = new FileReader();
