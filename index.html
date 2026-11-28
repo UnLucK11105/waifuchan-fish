@@ -474,6 +474,30 @@ document.getElementById('selFish').innerHTML = DB
   renderCalc(); renderRev(); renderDex();
   setInterval(loadFromGoogleSheets, 60_000);
 })();
+  const EMOJI_MAP = {
+  "Лягушка": "🐸", "Иглобрюх": "🐡", "Креветка": "🦐", "Черепаха": "🐢",
+  "Тропик": "🐠", "Лобстер": "🦞", "Краб": "🦀", "Речной дракон": "🐉",
+  "Устрица": "🦪", "Зонтик": "☂️", "Кит": "🐋", "Голубой кит": "🐳",
+  "Крокодил": "🐊", "Носок": "🧦", "Ракушка": "🐚", "Консервная банка": "🥫",
+  "Тюлень": "🦭", "Осьминог": "🐙", "Серебряная монета": "🪙",
+  "Чей-то телефон": "📱", "Кольцо": "💍", "Кальмар": "🦑", "Медуза": "🪼",
+  "Дельфин": "🐬", "Трезубец": "🔱", "Старый ключ": "🗝️", "Ботинок": "🥾",
+  "Якорь": "⚓", "Амфора": "🏺", "Выдра": "🦦", "Корона": "👑",
+  "Акула": "🦈", "Мегалодон": "🦈", "Рыба-капля": "🐟", "Рыба-ктулху": "🐙",
+  "Бутылка с запиской": "🍾", "Золотая рыбка": "🐠"
+};
+
+document.addEventListener('error', function(e) {
+  if (e.target && e.target.tagName === 'IMG') {
+    const img = e.target;
+    const alt = (img.alt || decodeURIComponent((img.src.split('/').pop() || '').replace(/\.webp.*$/i, ''))).trim();
+    const em = EMOJI_MAP[alt] || "🐟";
+    const span = document.createElement('div');
+    span.textContent = em;
+    span.style.cssText = 'width:84px;height:84px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:42px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;';
+    img.replaceWith(span);
+  }
+}, true);
 </script>
 </body>
 </html>
