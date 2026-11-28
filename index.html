@@ -492,10 +492,10 @@ document.addEventListener('error', function(e) {
     const img = e.target;
     const alt = (img.alt || decodeURIComponent((img.src.split('/').pop() || '').replace(/\.webp.*$/i, ''))).trim();
     const em = EMOJI_MAP[alt] || "🐟";
-    const span = document.createElement('div');
-    span.textContent = em;
-    span.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;';
-    img.replaceWith(span);
+    const box = img.parentElement;
+    if (box) {
+      box.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;">' + em + '</div>';
+    }
   }
 }, true);
 </script>
